@@ -1,19 +1,12 @@
-import Pkg; Pkg.activate(@__DIR__)
-
-# import Pkg; Pkg.activate(@__DIR__)
 using GLMakie
 using GeoMakie
 using Downloads
 using HDF5
 using Dates
 using AstroLib
-GLMakie.activate!()
-
-
-
 
 ## Extract the data
-filename = joinpath(@__DIR__, "data", "gps150317g.004.hdf5")
+filename = joinpath("data", "gps150317g.004.hdf5")
 fid = h5open(filename, "r")
 data = read(fid)
 close(fid)
