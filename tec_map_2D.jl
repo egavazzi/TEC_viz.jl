@@ -1,8 +1,9 @@
-using HDF5
-using GLMakie
-using GeoMakie
-using AstroLib
+using TEC_viz
 using Dates
+using GeoMakie
+using GLMakie
+using HDF5
+
 
 ## Extract the data
 filename = joinpath("data", "gps150317g.004.hdf5")
@@ -58,16 +59,6 @@ Colorbar(fig[1, 2], sc1; label = "TEC units", tellheight = false,
 Colorbar(fig[1, 4], sc2; label = "TEC units", tellheight = false,
          height = @lift Fixed($(pixelarea(ax1.scene)).widths[2]))
 # Add a shade over the night side of Earth
-function night_shade(unixtime)
-    # This is a simplified model of the nightshade on Earth surface.
-    # It is assuming that Earth rotation axis is not tilted.
-    zen_lon, _ = zenpos(unix2datetime(unixtime), 0, 0, 0)
-    zen_lon = rad2deg(zen_lon) - (ct2lst(0, datetime2julian(Date(unix2datetime(unixtime)))) + 12) * 15
-    midnight_lon = 180 - zen_lon
-    nightshade_lon = (midnight_lon - 90):(midnight_lon + 90)
-
-    return midnight_lon, nightshade_lon
-end
 nightshade_lon = Observable(night_shade(timestamps[1])[2])
 surface!(ax1, nightshade_lon, 0 .. 90, ones(30, 15); color = fill((:black, 0.3), 30, 15))
 surface!(ax2, nightshade_lon, -90 .. 0, ones(30, 15); color = fill((:black, 0.3), 30, 15))
