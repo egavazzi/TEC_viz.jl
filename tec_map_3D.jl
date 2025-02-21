@@ -35,7 +35,7 @@ rotate_cam!(ax.scene, (deg2rad(-40), deg2rad(150), 0))  # point on Svalbard
 
 # Add a title
 title_text = Observable(string(unix2datetime(timestamps[1])))
-Label(fig[0, 1], title_text; tellwidth = false)
+Label(fig[0, 1], title_text; tellwidth = false, fontsize = 20)
 
 
 # And plot the tec
@@ -92,17 +92,25 @@ function update_plot!(i_t, ax, nightshade_lon, tec, good_tec, timestamps, φ_sha
     title_text[] = string(unix2datetime(timestamps[i_t]))
     return nothing
 end
+
+
+# Add button to start the animation
+fig[2, :] = buttongrid = GridLayout(; tellwidth = false)
+run = buttongrid[1, 1] = Button(fig; label = "Play/Pause", tellwidth = false)
+i_t = Observable(1)
+isrunning = Observable(false)
+on(run.clicks) do clicks
+    isrunning[] = !isrunning[]
+end
+on(run.clicks) do clicks
+    @async while isrunning[]
+        i_t[] < length(timestamps) ? i_t[] += 1 : i_t[] = 1 # take next time step and loop when t_max is reached
+        isopen(fig.scene) || break # ensures animation stops if the figure is closed
+        update_plot!(i_t[], ax, nightshade_lon, tec, good_tec, timestamps, φ_shade, x_shade,
+                     y_shade, z_shade)
+        sleep(0.05)
+    end
+end
+
 #
 display(fig)
-
-
-
-
-##
-for i_t in 1:length(timestamps)
-    update_plot!(i_t, ax, nightshade_lon, tec, good_tec, timestamps, φ_shade, x_shade,
-                 y_shade, z_shade)
-    sleep(0.05)
-end
-# update_plot!(4, ax, nightshade_lon, tec, good_tec, timestamps, φ_shade, x_shade,
-#                       y_shade, z_shade)
