@@ -1,4 +1,4 @@
-Visualization of TEC, in 2D and 3D.
+Visualization of TEC data, in 2D and 3D.
 
 ## Example
 
