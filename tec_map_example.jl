@@ -9,8 +9,8 @@ using Dates
 
 
 ## Extract the data
-# filename = joinpath(@__DIR__, "gps150317g.004.hdf5")
-filename = joinpath(@__DIR__, "gps131107g.004.hdf5")
+filename = joinpath(@__DIR__, "data", "gps150317g.004.hdf5")
+# filename = joinpath(@__DIR__, "data", "gps131107g.004.hdf5")
 fid = h5open(filename, "r")
 data = read(fid)
 close(fid)
@@ -146,7 +146,7 @@ display(fig)
 
 ## That's to animate and save
 display(fig)
-video_file = joinpath(@__DIR__, "tec_map_20131107.mp4")
+video_file = joinpath(@__DIR__, "animations", "tec_map_20131107.mp4")
 record(fig, video_file, 1:length(timestamps); px_per_unit = 2, framerate = 15) do i_t
     update_plot!(i_t, ax1, ax2, midnight_lon, nightshade_lon, tec, good_tec, timestamps)
 end

@@ -13,7 +13,7 @@ GLMakie.activate!()
 
 
 ## Extract the data
-filename = joinpath(@__DIR__, "gps150317g.004.hdf5")
+filename = joinpath(@__DIR__, "data", "gps150317g.004.hdf5")
 fid = h5open(filename, "r")
 data = read(fid)
 close(fid)
