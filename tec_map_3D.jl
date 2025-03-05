@@ -1,4 +1,5 @@
 using TEC_viz
+using Dates
 using GeoMakie
 using GLMakie
 using HDF5
@@ -93,6 +94,12 @@ function update_plot!(i_t, ax, nightshade_lon, tec, good_tec, timestamps, φ_sha
     return nothing
 end
 
+# Add slider to control time
+time_slider = Slider(fig[-1, 1], range = 1:length(timestamps), startvalue = 1, width = Relative(0.8))
+on(time_slider.value) do i_t
+    update_plot!(i_t, ax, nightshade_lon, tec, good_tec, timestamps, φ_shade, x_shade,
+                 y_shade, z_shade)
+end
 
 # Add button to start the animation
 fig[2, :] = buttongrid = GridLayout(; tellwidth = false)
@@ -101,16 +108,16 @@ i_t = Observable(1)
 isrunning = Observable(false)
 on(run.clicks) do clicks
     isrunning[] = !isrunning[]
-end
-on(run.clicks) do clicks
+    i_t[] = time_slider.value[]
     @async while isrunning[]
         i_t[] < length(timestamps) ? i_t[] += 1 : i_t[] = 1 # take next time step and loop when t_max is reached
         isopen(fig.scene) || break # ensures animation stops if the figure is closed
-        update_plot!(i_t[], ax, nightshade_lon, tec, good_tec, timestamps, φ_shade, x_shade,
-                     y_shade, z_shade)
+        set_close_to!(time_slider, i_t[])
         sleep(0.05)
     end
 end
+
+
 
 #
 display(fig)
