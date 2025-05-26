@@ -67,7 +67,7 @@ Label(fig[0, 1], title_text; tellwidth = false, fontsize = 20)
 
 
 # Make a function to update the data points
-function update_plot!(i_t, ax, nightshade_lon, tec, good_tec, timestamps, φ_shade, x_shade,
+function update_plot!(i_t, nightshade_lon, tec, good_tec, timestamps, φ_shade, x_shade,
                       y_shade, z_shade)
     # update the tec points
     local tec_points = tec[i_t, :, :]
@@ -93,7 +93,7 @@ end
 # Add slider to control time
 time_slider = Slider(fig[2, 1], range = 1:length(timestamps), startvalue = 1, width = Relative(0.8))
 on(time_slider.value) do i_t
-    update_plot!(i_t, ax, nightshade_lon, tec, good_tec, timestamps, φ_shade, x_shade,
+    update_plot!(i_t, nightshade_lon, tec, good_tec, timestamps, φ_shade, x_shade,
                  y_shade, z_shade)
 end
 
