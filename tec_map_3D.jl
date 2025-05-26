@@ -26,20 +26,15 @@ x = [cos(φ) * sin(θ) for θ in θ, φ in φ]
 y = [sin(φ) * sin(θ) for θ in θ, φ in φ]
 z = [cos(θ) for θ in θ, φ in φ]
 
-fig = Figure(size = (800, 600), backgroundcolor = :grey80)
+fig = Figure(size = (1000, 800), backgroundcolor = :grey80)
 ax = LScene(fig[1, 1], show_axis = false)
 surface!(ax, x, y, z;
     color = GeoMakie.earth(),
     shading = NoShading,
     )
 rotate_cam!(ax.scene, (deg2rad(-40), deg2rad(150), 0))  # point on Svalbard
+zoom!(ax.scene, 0.6)
 
-# Add a title
-title_text = Observable(string(unix2datetime(timestamps[1])))
-Label(fig[0, 1], title_text; tellwidth = false, fontsize = 20)
-
-
-# And plot the tec
 # Initialize Observables
 tec_points = tec[1, :, :]
 good_idx = findall(!isnan, tec_points)
@@ -48,7 +43,6 @@ good_lat = Observable([lat[i[2]] for i in good_idx])
 good_tec = Observable(tec_points[good_idx])
 # Switch to cartesian coordinates
 positions = Observable(toCartesian.(good_lon[], good_lat[], 100))
-
 
 # Plot the tec points
 sc1 = scatter!(ax, positions; color = good_tec, colormap = :plasma,
@@ -65,7 +59,9 @@ z_shade = Observable([cos(θ) for θ in θ_shade, φ in φ_shade[]] .* (1 + 200/
 surface!(ax, x_shade, y_shade, z_shade; color = fill((:black, 0.4), (180, 180)),
          shading = NoShading)
 
-
+# Add a title
+title_text = Observable(string(unix2datetime(timestamps[1])))
+Label(fig[0, 1], title_text; tellwidth = false, fontsize = 20)
 
 
 
@@ -95,14 +91,14 @@ function update_plot!(i_t, ax, nightshade_lon, tec, good_tec, timestamps, φ_sha
 end
 
 # Add slider to control time
-time_slider = Slider(fig[-1, 1], range = 1:length(timestamps), startvalue = 1, width = Relative(0.8))
+time_slider = Slider(fig[2, 1], range = 1:length(timestamps), startvalue = 1, width = Relative(0.8))
 on(time_slider.value) do i_t
     update_plot!(i_t, ax, nightshade_lon, tec, good_tec, timestamps, φ_shade, x_shade,
                  y_shade, z_shade)
 end
 
 # Add button to start the animation
-fig[2, :] = buttongrid = GridLayout(; tellwidth = false)
+fig[3, :] = buttongrid = GridLayout(; tellwidth = false)
 run = buttongrid[1, 1] = Button(fig; label = "Play/Pause", tellwidth = false)
 i_t = Observable(1)
 isrunning = Observable(false)
@@ -118,6 +114,6 @@ on(run.clicks) do clicks
 end
 
 
-
-#
-display(fig)
+# Display the figure
+# display(fig)
+display(fig, update = false) # this is to avoid our camera zoom to be reset
