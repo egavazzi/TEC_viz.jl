@@ -110,6 +110,9 @@ on(run.clicks) do clicks
         isopen(fig.scene) || break # ensures animation stops if the figure is closed
         set_close_to!(time_slider, i_t[])
         sleep(0.05)
+        # This is in case the user drags the slider at the same time.
+        # In that case, the animation continues from the new slider position
+        i_t[] = time_slider.value[]
     end
 end
 
