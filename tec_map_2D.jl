@@ -91,49 +91,39 @@ function update_plot!(i_t, ax1, ax2, midnight_lon, nightshade_lon, tec, good_tec
     return nothing
 end
 
+# Add slider to control time
+time_slider = Slider(fig[2, :], range = 1:length(timestamps), startvalue = 1, width = Relative(0.8))
+on(time_slider.value) do i_t
+    update_plot!(i_t, ax1, ax2, midnight_lon, nightshade_lon, tec, good_tec, timestamps)
+end
 
-# ## Testing if it works
-# display(fig)
-# for i_t in 1:length(timestamps)
-#     update_plot!(i_t, ax1, ax2, midnight_lon, nightshade_lon, tec, good_tec, timestamps)
-#     sleep(0.05)
-# end
-
-
-# Add a button to launch the animation
-fig[2, :] = buttongrid = GridLayout(; tellwidth = false)
+# Add button to launch the animation
+fig[3, :] = buttongrid = GridLayout(; tellwidth = false)
 run = buttongrid[1, 1] = Button(fig; label = "Play/Pause", tellwidth = false)
-isrunning = Observable(false)
 i_t = Observable(1)
+isrunning = Observable(false)
 on(run.clicks) do clicks
     isrunning[] = !isrunning[]
-end
-on(run.clicks) do clicks
+    i_t[] = time_slider.value[]
     @async while isrunning[]
         i_t[] < length(timestamps) ? i_t[] += 1 : i_t[] = 1 # take next time step and loop when t_max is reached
         isopen(fig.scene) || break # ensures animation stops if the figure is closed
-        update_plot!(i_t[], ax1, ax2, midnight_lon, nightshade_lon, tec, good_tec,
-                     timestamps)
+        set_close_to!(time_slider, i_t[])
         sleep(0.05)
+        if i_t[] != time_slider.value[]
+            i_t[] = time_slider.value[]
+        end
     end
 end
-# Add a button to reset the animation
-reset = buttongrid[1, 2] = Button(fig; label = "Reset", tellwidth = false)
-on(reset.clicks) do clicks
-    i_t[] = 1
-    update_plot!(i_t[], ax1, ax2, midnight_lon, nightshade_lon, tec, good_tec, timestamps)
-end
-
 
 # Finally display the figure
 display(fig)
-# display(GLMakie.Screen(), fig)
 
 
 
 ## That's to animate and save
-display(fig)
-video_file = joinpath(@__DIR__, "animations", "tec_map_20131107.mp4")
-record(fig, video_file, 1:length(timestamps); px_per_unit = 2, framerate = 15) do i_t
-    update_plot!(i_t, ax1, ax2, midnight_lon, nightshade_lon, tec, good_tec, timestamps)
-end
+# display(fig)
+# video_file = joinpath(@__DIR__, "animations", "tec_map_20131107.mp4")
+# record(fig, video_file, 1:length(timestamps); px_per_unit = 2, framerate = 15) do i_t
+#     update_plot!(i_t, ax1, ax2, midnight_lon, nightshade_lon, tec, good_tec, timestamps)
+# end
