@@ -123,7 +123,7 @@ display(fig)
 
 ## That's to animate and save
 # display(fig)
-# video_file = joinpath(@__DIR__, "animations", "tec_map_20131107.mp4")
-# record(fig, video_file, 1:length(timestamps); px_per_unit = 2, framerate = 15) do i_t
-#     update_plot!(i_t, ax1, ax2, midnight_lon, nightshade_lon, tec, good_tec, timestamps)
-# end
+video_file = joinpath(@__DIR__, "animations", "tec_map_20150317_new.mp4")
+record(fig, video_file, 1:length(timestamps); px_per_unit = 2, framerate = 15) do i_t
+    set_close_to!(time_slider, i_t[])
+end
