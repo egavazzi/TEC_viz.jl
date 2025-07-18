@@ -20,6 +20,7 @@ https://github.com/user-attachments/assets/cc1c27fe-f001-47a8-9b98-33c71ab66ec8
     ```julia
     julia> import Pkg
     julia> Pkg.activate(".") # depending on where you are located, you might have to enter a different path
+      Activating project at `~/Documents/TEC_viz.jl`
     julia> Pkg.instantiate() # this will install the required packages
     ```
     The next times you want to run the code, you only need to activate the environment.
@@ -29,4 +30,4 @@ https://github.com/user-attachments/assets/cc1c27fe-f001-47a8-9b98-33c71ab66ec8
     julia> include("tec_map_3D.jl") # will start the 3D visualization
     ```
 
-If you have questions/need help, do not hesitate to contact me at  [etienne.gavazzi@uit.no](mailto:etienne.gavazzi@uit.no).
+If you have questions/need help, do not hesitate to open an issue or to contact me at [etienne.gavazzi@uit.no](mailto:etienne.gavazzi@uit.no).
